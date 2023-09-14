@@ -7,3 +7,5 @@ jq
 faiss-cpu
 pypdf
 tqdm
+wikipedia
+arxiv
