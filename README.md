@@ -31,62 +31,12 @@ Add it to your .env file.
 docker build --rm --tag codetalks23 .
 docker run -it --rm -v `pwd`:/home/jovyan/work -p 8888:8888 codetalks23
 ```
+# Go! 
+
+The docker output should show you a url that you are able to open.
 
 
-# Agenda 
+### Interested in langchain? 
 
-## Repository, Einrichtung und Co
-
-## Was sind Agenten?
-
-## Was ändert sich mit LLMs?
-- Vorher: Statistik, Zusammenfassung, Ergänzung, Lückenfüllen
-- Supergross
-- Superaufwendig
-- Training zu teuer
-- Finetuning
-- Instruction Tuning
-- Der Unterschied zu klassischer ML: Few und Zero Shot  
-- RHLF
-- Emergent Properties
-- Reasoning
-- Theory of Mind
-- RLAIF
-## Probleme: Halluzinationen und Mathe
-- woher kommen die
-- was kann man dagegen tun 
-- CoT
-- ReAct
-
-## Agenten mit LLMs
-
-## Einfacher ReactZeroShotAgent
-HandsOn 1: ein einfacher Agent
-
-## Typen von Agenten - Basics
-- Zero-Shot React
-- Structured Input
-- Conversational
-
-## mit externen Quellen
-- RAG 
-- ReAct Document Store 
-- self-ask
-- Self-Ask with Search
-
-## Tools 
-- Human in the Loop
-
-## Smarter Agents
-- Plan & Execute
-- Tree of Thoughts
-- Program aided language 
-## Autonomous Agents
-
-
-# Camel und Konversational Agents
-
-## Interagierende Agenten 
-
-
+You can get the free german translation of Mark Watsons Book at [hub.mayflower.de/langchain-buch](http://hub.mayflower.de/langchain-buch).
 
