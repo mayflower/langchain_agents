@@ -3,7 +3,6 @@ langchain-experimental
 openai
 python-dotenv
 google-search-results
-jq
 faiss-cpu
 pypdf
 tqdm
