@@ -10,8 +10,8 @@ The workshop uses git and docker to make it easier to use on all platforms.
 If You don't use docker for religious reasons you can use a local python virtenv / conda configuration instead. 
 
 ```bash
-git clone https://github.com/mayflower/codetalks23
-cd codetalks23
+git clone https://github.com/mayflower/langchain_agents.git
+cd langchain_agents
 cp .env.dist .env
 ```
 ## Step 2: Get an OpenAI API key
@@ -39,8 +39,8 @@ Copy the "application (client) id" and add it to the .env file.
 Create a new client secret and add it to the .env file, too.
 ## Step 5: Use docker to start working
 ```bash
-docker build --rm --tag codetalks23 .
-docker run -it --rm -v `pwd`:/home/jovyan/work -p 8888:8888 codetalks23
+docker build --rm --tag langchain_agents .
+docker run -it --rm -v `pwd`:/home/jovyan/work -p 8888:8888 langchain_agents
 ```
 # Go! 
 
