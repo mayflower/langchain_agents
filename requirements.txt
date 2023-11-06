@@ -1,5 +1,6 @@
 langchain
 langchain-experimental
+langchainhub
 openai
 python-dotenv
 google-search-results
@@ -8,3 +9,5 @@ pypdf
 tqdm
 wikipedia
 arxiv
+atlassian-python-api
+numexpr
