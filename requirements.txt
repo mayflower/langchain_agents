@@ -1,6 +1,8 @@
 langchain
 langchain-experimental
 langchainhub
+langchain-cli
+langserve[all]
 openai
 python-dotenv
 google-search-results
