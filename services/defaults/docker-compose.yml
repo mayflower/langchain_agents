@@ -1,0 +1,11 @@
+version: '3.4'
+services:
+  myservice:
+    image: langserve
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    build:
+      context: .
+      dockerfile: ./Dockerfile

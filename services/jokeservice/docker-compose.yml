@@ -1,0 +1,11 @@
+version: '3.4'
+services:
+  jokeserve:
+    image: langserve
+    env_file:
+      - .env
+    ports:
+      - "8001:8001"
+    build:
+      context: .
+      dockerfile: ./Dockerfile

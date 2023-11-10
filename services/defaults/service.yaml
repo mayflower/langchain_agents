@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myservice
+  labels:
+    app: myservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: myservice
+  template:
+    metadata:
+      labels:
+        app: myservice
+    spec:
+      containers:
+      - name: fastapi
+        image: localhost/myservice
+        env:
+        - name: OPENAI_API_BASE
+          valueFrom:
+            secretKeyRef:
+              name: openai
+              key: OPENAI_API_BASE
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: openai
+              key: OPENAI_API_KEY
+        - name: OPENAI_API_VERSION
+          valueFrom:
+            secretKeyRef:
+              name: openai
+              key: OPENAI_API_VERSION
+        - name: OPENAI_API_TYPE
+          valueFrom:
+            secretKeyRef:
+              name: openai
+              key: OPENAI_API_TYPE
+        ports:
+        - containerPort: 8001
+          name: http
+          protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: myservice
+  labels:
+    app: myservice
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8001
+    name: http
+  selector:
+    app: myservice
+
+---

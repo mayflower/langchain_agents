@@ -1,0 +1,33 @@
+# ----------------------------------------------------------------------------------
+# Basic Tilt Setup
+# ----------------------------------------------------------------------------------
+
+# create a current setup
+# k3d cluster create langchain --registry-create registry:5000
+
+# load needed extensions
+load('ext://secret', 'secret_from_dict')
+load('ext://helm_resource', 'helm_resource', 'helm_repo')
+allow_k8s_contexts(k8s_context())
+
+# get environment variables
+AZURE_OPENAI_ENDPOINT   = str(local('echo $AZURE_OPENAI_ENDPOINT')).strip()
+AZURE_OPENAI_API_KEY    = str(local('echo $AZURE_OPENAI_KEY')).strip()
+OPENAI_API_VERSION      = '2023-05-15'
+OPENAI_API_TYPE         = 'azure'
+
+# Install Registry and use it as a default
+default_registry("localhost:5000")
+
+k8s_yaml(secret_from_dict("openai", inputs = {
+    'AZURE_OPENAI_ENDPOINT' : AZURE_OPENAI_ENDPOINT,
+    'AZURE_OPENAI_API_KEY'  : AZURE_OPENAI_API_KEY,
+    'OPENAI_API_VERSION'    : OPENAI_API_VERSION,
+    'OPENAI_API_TYPE'       : OPENAI_API_TYPE}))
+
+docker_build('localhost/jokeservice', './jokeservice')
+k8s_yaml("./jokeservice/service.yaml")
+k8s_resource(workload="jokeservice", port_forwards=['8001:8001'])
+
+
+
