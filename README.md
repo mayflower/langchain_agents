@@ -14,13 +14,15 @@ git clone https://github.com/mayflower/langchain_agents.git
 cd langchain_agents
 cp .env.dist .env
 ```
-## Step 2: Get an OpenAI API key
+## Step 2: Create an azure openai endpoint with embeddings, gpt-3.5 and gpt-4 models. 
 
-Please ignore this section if you already use openai, and just insert one of your existing keys to the .env file.
+Please create an [openai endpoint](https://portal.azure.com/#create/Microsoft.CognitiveServicesOpenAI) at microsoft azure. 
+Write down the Endpoint and Key1 to use them in your .env file.
+After the endpoints was created create model deployments for gpt-3.5-turbo and gpt-4 named "gpt-35-turbo" and "gpt-4", since "." is not a valid character for model deployments.
+Please create a deployment "Embeddings" using the model "text-embedding-ada-002"
 
-Create an account at [platform.openai.com](https://platform.openai.com/signup). Use your e-mail-adress or an existing google or microsoft account. 
+Copy the file .env.dist to .env and fill out the entries for AZURE_OPENAI_ENDPOINT and AZURE_OPENAI_API_KEY.
 
-Create a new API key at [platform.openai.com/account/api-keys](https://platform.openai.com/account/api-keys) and insert it to the .env file.
 
 ## Step 3: Get a SerpApi-Key to search the internet
 

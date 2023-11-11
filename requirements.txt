@@ -13,3 +13,4 @@ wikipedia
 arxiv
 atlassian-python-api
 numexpr
+tiktoken
