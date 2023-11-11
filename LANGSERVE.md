@@ -34,16 +34,16 @@ langchain serve
 
 To be able to deploy the application with a key on it's own we use dotenv.
 ```sh
-pip install python-dotenv
+poetry add python-dotenv
 ```
 
-Create a .env file with the OPENAI_API_KEY: 
+Create a .env file with the setup of your azure openai endpoint: 
 ```sh
-echo "OPENAI_API_KEY=[sk-your_openai_api_key_here]" > .env
+AZURE_OPENAI_ENDPOINT=sk-your-azure-openai-endpoint-here
+AZURE_OPENAI_API_KEY=sk-your-azure-openai-key-here
+OPENAI_API_VERSION='2023-05-15'
+OPENAI_API_TYPE='azure'
 ```
-
-
-
 
 You can now modify the server.py:
 
@@ -87,6 +87,23 @@ if __name__ == "__main__":
 ## Dockerize your service 
 
 See [our example Dockerfile]("services/defaults/Dockerfile") and [example docker-compose.yaml]("services/defaults/docker-compose.yaml").
+
+## Docker example service 
+
+We implemented a simple joke service based on the langserve example.
+
+```sh
+cd services/jokeservice
+docker-compose build
+docker-compose up
+```
+You can now use the following urls to interact with the new service: 
+
+| Description | URL |
+|-------------|-----|
+|API Documentation|[http://localhost:8001/docs](http://localhost:8001/docs)|
+|Swagger Json | [http://localhost:8001/openapi.json](http://localhost:8001/openapi.json)|
+|Chain Playground|[http://localhost:8001/chain/playground/](http://localhost:8001/chain/playground/)|
 
 ## Use your service with kubernetes 
 
