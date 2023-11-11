@@ -9,6 +9,8 @@ readme = "README.md"
 python = "^3.11"
 uvicorn = "^0.23.2"
 langserve = {extras = ["server"], version = ">=0.0.22"}
+python-dotenv = "^1.0.0"
+openai = "^1.2.3"
 
 
 [tool.poetry.group.dev.dependencies]

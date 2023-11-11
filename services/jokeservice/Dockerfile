@@ -1,9 +1,20 @@
-FROM python:3.10-slim
-WORKDIR /app
-COPY . .
+FROM python:3.11-slim
 
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
+RUN pip install poetry==1.5.1
+RUN poetry config virtualenvs.create false
 
-EXPOSE 8000
+WORKDIR /code
 
-CMD ["uvicorn", "app.server:app", "--host", "0.0.0.0", "--port", "8001"]
+COPY ./pyproject.toml ./poetry.lock* ./
+COPY ./packages ./packages
+
+RUN poetry install --no-interaction --no-ansi --no-root
+
+COPY ./ ./
+
+RUN poetry install --no-interaction --no-ansi
+
+EXPOSE 8001
+
+CMD exec uvicorn app.server:app --host 0.0.0.0 --port 8001
+
