@@ -86,7 +86,7 @@ if __name__ == "__main__":
 
 ## Dockerize your service 
 
-See [our example Dockerfile]("services/defaults/Dockerfile") and [example docker-compose.yaml]("services/defaults/docker-compose.yaml").
+See [our example Dockerfile](/services/defaults/Dockerfile) and [example docker-compose.yaml](/services/defaults/docker-compose.yml).
 
 ## Docker example service 
 
