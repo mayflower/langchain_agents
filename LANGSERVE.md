@@ -107,9 +107,11 @@ You can now use the following urls to interact with the new service:
 
 ## Use your service with kubernetes 
 
-You can deploy these services on kubernetes using [tilt.dev]("https://tilt.dev/") and (k3d)["https://k3d.io/"] for local kubernetes development. 
+You can deploy these services on kubernetes using [tilt.dev]("https://tilt.dev/") and [k3d]("https://k3d.io/") for local kubernetes development. 
 
-To use tilt with k3s use the following commands: 
+Please install tilt and k3d locally. 
+
+To use tilt with k3s use the following commands to start a local, docker-based kubernetes cluster and to start a local demo service based on langserve:
 ```sh
 cd services 
 
