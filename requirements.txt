@@ -13,4 +13,8 @@ wikipedia
 arxiv
 atlassian-python-api
 numexpr
+beautifulsoup4
+lxml
 tiktoken
+ipydatagrid
+bqplot
