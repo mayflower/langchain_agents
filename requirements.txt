@@ -1,5 +1,8 @@
-langchain
-langchain-experimental
+langchain>=0.1.9
+langgraph>=0.0.26
+pydantic>=2.0.0
+tavily-python
+langchain-openai>=0.0.2
 langchainhub
 langchain-cli
 langserve[all]
