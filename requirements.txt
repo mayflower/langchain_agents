@@ -18,3 +18,4 @@ lxml
 tiktoken
 ipydatagrid
 bqplot
+nbstripout

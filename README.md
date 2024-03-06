@@ -4,6 +4,10 @@ This is a repository for our workshop. You'll find the slides (here)[https://sli
 
 # Setup
 
+## Prerequisites:
+
+The easiest way to get started is using vscode and devcontainers. For this you need to have docker and vscode installed on your machine. It's up to you though, whether you'd want to use the Devcontainer, or work with your local python installation. The Devcontainer just provides a consistent environment for everyone.
+
 ## Step 1: get the source, luke! 
 
 The workshop uses git and docker to make it easier to use on all platforms. 
