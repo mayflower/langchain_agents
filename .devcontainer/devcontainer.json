@@ -25,10 +25,20 @@
         "LANG": "en_US.UTF-8",
         "LC_ALL": "en_US.UTF-8",
         "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}",
+        "TZ": "Europe/Berlin",
         "CONTAINER_WORKSPACE_FOLDER": "${containerWorkspaceFolder}",
         "HISTFILE": "/home/${NB_USER}/.bash_history",
         "EDITOR": "code -w"
     },
-    "postStartCommand": "nbstripout --install --attributes .gitattributes --python python",
+    "postStartCommand": "nbstripout --install --attributes .gitattributes --python python && jupyter-notebook",
+    "portsAttributes": {
+        "8888": {
+            "label": "Jupyter Notebook (Browser)",
+            "onAutoForward": "notify"
+        }
+    },
+    "forwardPorts": [
+        "8888:8888"
+    ],
     "privileged": true
 }
