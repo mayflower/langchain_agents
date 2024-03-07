@@ -21,9 +21,8 @@ RUN apt-get update && \
     gnupg2 \
     git \
     openssh-client && \
-    rm -rf /var/lib/apt/lists/* 
-# Add sudo support for the nbuser (disabled)
-# echo "${NB_USER} ALL=(ALL) NOPASSWD:ALL" | tee -a /etc/sudoers
+    rm -rf /var/lib/apt/lists/* && \
+    echo "${NB_USER} ALL=(ALL) NOPASSWD:ALL" | tee -a /etc/sudoers
 
 USER ${NB_USER}
 

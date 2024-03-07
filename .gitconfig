@@ -2,5 +2,6 @@
     clean = python -m nbstripout --attributes=.gitattributes
     smude = cat
     required = true
+    extraKeys = 'metadata.kernelspec\nmetadata.language_info'
 [diff "ipynb"]
     textconv = python -m nbstripout -t --attributes=.gitattributes
