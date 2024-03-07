@@ -1,2 +1,6 @@
-*.ipynb filter=nbstripout
+*.ipynb filter=nbstripout 
 *.ipynb diff=ipynb
+# Windows compat
+* text=auto eol=lf
+*.{cmd,[cC][mM][dD]} text eol=crlf
+*.{bat,[bB][aA][tT]} text eol=crlf

@@ -15,14 +15,16 @@ FROM base as devcontainer
 
 USER root
 
-# Install git for interacting with the git repository
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Install git and gpg for interacting with the git repository
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    gnupg2 \
     git \
-    && rm -rf /var/lib/apt/lists/*
+    openssh-client && \
+    rm -rf /var/lib/apt/lists/* 
+# Add sudo support for the nbuser (disabled)
+# echo "${NB_USER} ALL=(ALL) NOPASSWD:ALL" | tee -a /etc/sudoers
 
 USER ${NB_USER}
 
-
 WORKDIR /workspaces
-
-COPY . .

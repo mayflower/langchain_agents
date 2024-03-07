@@ -1,0 +1,6 @@
+[filter "nbstripout"]
+    clean = python -m nbstripout --attributes=.gitattributes
+    smude = cat
+    required = true
+[diff "ipynb"]
+    textconv = python -m nbstripout -t --attributes=.gitattributes

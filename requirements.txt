@@ -24,3 +24,4 @@ ipydatagrid
 bqplot
 nbstripout
 duckduckgo-search
+pre-commit

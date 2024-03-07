@@ -1,0 +1,5 @@
+[git]
+    attributes = .gitattributes
+
+[keep_output]
+    gitattributes = false
