@@ -30,7 +30,7 @@
         "HISTFILE": "/home/${NB_USER}/.bash_history",
         "EDITOR": "code -w"
     },
-    "postStartCommand": "nbstripout --install --attributes .gitattributes --python python && jupyter-notebook",
+    "postStartCommand": "nbstripout --install --attributes .gitattributes --python python && nbdime config-git --enable --global && jupyter-notebook",
     "portsAttributes": {
         "8888": {
             "label": "Jupyter Notebook (Browser)",
