@@ -14,7 +14,8 @@
                 "ms-python.python",
                 "ms-toolsai.jupyter",
                 "github.copilot-chat",
-                "github.copilot"
+                "github.copilot",
+                "eamodio.gitlens"
             ]
         }
     },

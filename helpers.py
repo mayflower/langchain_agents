@@ -34,3 +34,17 @@ def embeddings():
 
 def formatted_output_writer(data):
     return data.get("agent_outcome").return_values.get("output")
+
+async def graph_agent_llm_output_streamer(app, inputs):
+    async for output in app.astream_log(inputs, include_types=["llm"]):
+        for op in output.ops:
+            if op["path"] == "/streamed_output/-":
+                # this is the output from .stream()
+                ...
+            elif op["path"].startswith("/logs/") and op["path"].endswith(
+                "/streamed_output/-"
+            ):
+                # because we chose to only include LLMs, these are LLM tokens
+                token_content = op["value"].content
+                if token_content:
+                    print(op["value"].content, end="", flush=True)
