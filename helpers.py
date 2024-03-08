@@ -1,32 +1,36 @@
 import os
 from dotenv import load_dotenv
 from langchain_openai import AzureChatOpenAI, ChatOpenAI
-from langchain_core.runnables import ConfigurableField
 from langchain_openai import OpenAIEmbeddings, AzureOpenAIEmbeddings
 
 load_dotenv()
 
-openai_llm = ChatOpenAI(model=os.environ["OPENAI_MODEL"]).configurable_fields(
-    temperature=ConfigurableField(id="temperature", is_shared=True)
-)
-azure_llm = AzureChatOpenAI(
-    azure_deployment=os.environ["AZURE_OPENAI_DEPLOYMENT_NAME"]
-).configurable_fields(temperature=ConfigurableField(id="temperature", is_shared=True))
-llm = openai_llm.configurable_alternatives(
-    ConfigurableField(id="llm"), default_key="openai", azure=azure_llm
-)
+
+def llm(temperature: float = 0.7):
+    if os.environ["OPENAI_API_KEY"]:
+        return ChatOpenAI(
+            model=os.environ["OPENAI_MODEL"], temperature=temperature, streaming=True
+        )
+    elif os.environ["AZURE_OPENAI_API_KEY"]:
+        return AzureChatOpenAI(
+            azure_deployment=os.environ["AZURE_OPENAI_DEPLOYMENT_NAME"],
+            temperature=temperature,
+            streaming=True,
+        )
+    else:
+        raise ValueError("No provider secret found in environment variables.")
 
 
-# Since Embeddings do not implement the Runnable interface, we cannot do the configurable_field trick with it.
-# This is just a plain getter.
-def embeddings(e: str = "openai"):
-    if e == "openai":
+def embeddings():
+    if os.environ["OPENAI_API_KEY"]:
         return OpenAIEmbeddings()
-    elif e == "azure":
+    elif os.environ["AZURE_OPENAI_API_KEY"]:
         return AzureOpenAIEmbeddings(
             azure_deployment=os.environ["AZURE_OPENAI_EMBEDDING_NAME"]
         )
+    else:
+        raise ValueError("No provider secret found in environment variables.")
 
 
-def graph_agent_output_printer(data):
-    print("\nAgent result: ", data.get("agent_outcome").return_values.get("output"))
+def formatted_output_writer(data):
+    return data.get("agent_outcome").return_values.get("output")
