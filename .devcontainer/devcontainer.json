@@ -1,6 +1,12 @@
 {
     "name": "Langchain Agents",
-    "dockerFile": "../Dockerfile",
+    "image": "mcr.microsoft.com/devcontainers/python:1-3.12-bullseye",
+    "features": {
+        "ghcr.io/hspaans/devcontainer-features/sshpass:1": {
+            "installDirectlyFromGitHubRelease": true,
+            "version": "latest"
+        }
+    },
     "customizations": {
         "vscode": {
             "settings": {
@@ -19,27 +25,17 @@
             ]
         }
     },
-    "mounts": [
-        "source=mf-langchain-agents-devcontainer-bash-history,target=/home/${NB_USER}/.bash_history,type=volume"
-    ],
     "containerEnv": {
         "LANG": "en_US.UTF-8",
         "LC_ALL": "en_US.UTF-8",
-        "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}",
         "TZ": "Europe/Berlin",
-        "CONTAINER_WORKSPACE_FOLDER": "${containerWorkspaceFolder}",
-        "HISTFILE": "/home/${NB_USER}/.bash_history",
         "EDITOR": "code -w"
     },
-    "postStartCommand": "nbstripout --install --attributes .gitattributes --python python && nbdime config-git --enable --global && jupyter-notebook",
-    "portsAttributes": {
-        "8888": {
-            "label": "Jupyter Notebook (Browser)",
-            "onAutoForward": "notify"
-        }
-    },
-    "forwardPorts": [
-        "8888:8888"
+    "onCreateCommand": "/usr/local/bin/python -m pip install ipykernel && /usr/local/bin/python -m ipykernel install --user --name=python --display-name=Python3 && /usr/local/bin/python -m pip install nbstripout nbdime",
+    "postCreateCommand": [
+        "/usr/local/bin/python -m nbstripout --install --attributes .gitattributes"
+        // "&&",
+        // "/usr/local/bin/python -m pip nbdime config-git --enable --global"
     ],
     "privileged": true
 }
