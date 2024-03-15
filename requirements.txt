@@ -26,3 +26,8 @@ nbstripout
 duckduckgo-search
 pre-commit
 nbdime
+sentence-transformers
+torch
+transformers
+qdrant_client
+rank_bm25
