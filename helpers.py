@@ -7,7 +7,7 @@ from langchain_openai import (
     OpenAIEmbeddings,
     AzureOpenAIEmbeddings,
 )
-from typing import List, Tuple
+from typing import List, Tuple, Any, AsyncIterator
 from langchain.evaluation import load_evaluator
 import pandas as pd
 from ipydatagrid import DataGrid, BarRenderer
@@ -16,19 +16,32 @@ from transformers import AutoTokenizer, AutoModelForMaskedLM
 import torch
 import textwrap
 from langchain._api import suppress_langchain_deprecation_warning
+from langchain_core.agents import AgentActionMessageLog, AgentFinish
 
 load_dotenv()
 
 
-def llm(temperature: float = 0.7, openai_model: str = None):
+def llm(temperature: float = 0.7, model: str = None, streaming: bool = True, **kwargs):
+    """
+    wrapper around the OpenAI and Azure OpenAI LLMs. Takes per default the model where the KEY is set in the environment variables.
+    First takes OpenAI if the key is set.
+
+    Args:
+        temperature (float, optional): temperature for sampling. Defaults to 0.7.
+        model (str, optional): model name. Defaults to None. Specify OpenAI model string or Azure deployment name. Otherwise tries to get the model from the environment variables.
+    """
     if os.environ["OPENAI_API_KEY"]:
-        model = openai_model if openai_model else os.environ.get("OPENAI_MODEL")
-        return ChatOpenAI(model=model, temperature=temperature, streaming=True)
+        model_name = model if model else os.environ.get("OPENAI_MODEL")
+        return ChatOpenAI(
+            model=model_name, temperature=temperature, streaming=streaming, **kwargs
+        )
     elif os.environ["AZURE_OPENAI_API_KEY"]:
+        deployment = model if model else os.environ.get("AZURE_OPENAI_DEPLOYMENT_NAME")
         return AzureChatOpenAI(
-            azure_deployment=os.environ["AZURE_OPENAI_DEPLOYMENT_NAME"],
+            azure_deployment=deployment,
             temperature=temperature,
-            streaming=True,
+            streaming=streaming,
+            **kwargs,
         )
     else:
         raise ValueError("No provider secret found in environment variables.")
@@ -79,6 +92,35 @@ def rag_agent_output_streamer(chunks):
                             ]
                         )
                 yield "\n---\n"
+
+
+def agent_formatted_output(data):
+    return data.get("agent_outcome").return_values.get("output")
+
+
+async def formatted_output_streamer(stream: AsyncIterator[Any]) -> AsyncIterator[Any]:
+    async for chunk in stream:
+        output = ""
+        for key, value in chunk.items():
+            if key == "agent":
+                outcome = value.get("agent_outcome")
+                if isinstance(outcome, AgentActionMessageLog):
+                    output += f"Agent log:\n\n{outcome.log.strip()}"
+                elif isinstance(outcome, AgentFinish):
+                    output += f"Agent finished:\n\n{outcome.log.strip()}"
+                output += "\n\n----------------------------------------------------------------------------------------\n\n"
+            elif key == "action":
+                steps: List[Tuple[AgentActionMessageLog, str]] = value.get(
+                    "intermediate_steps"
+                )
+                for index, step in enumerate(steps):
+                    output += f"Tool log:\n\n{step[1].strip()}"
+                    if index < len(steps) - 1:
+                        print("----------------")
+                output += "\n\n----------------------------------------------------------------------------------------\n\n"
+            elif key == "__end__":
+                output = "Done"
+        yield output
 
 
 # Only streams the final LLM output from the agent. Uses the latest method which is astream_events (in BETA).
