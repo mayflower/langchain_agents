@@ -1,22 +1,25 @@
 import os
 import re
+import textwrap
+from typing import Any, AsyncIterator, Dict, List, Tuple
+
+import pandas as pd
+import torch
+from bqplot import ColorScale, LinearScale
 from dotenv import load_dotenv
+from ipydatagrid import BarRenderer, DataGrid
+from langchain._api import suppress_langchain_deprecation_warning
+from langchain.evaluation import load_evaluator
+from langchain_core.agents import AgentActionMessageLog, AgentFinish
 from langchain_openai import (
     AzureChatOpenAI,
+    AzureOpenAIEmbeddings,
     ChatOpenAI,
     OpenAIEmbeddings,
-    AzureOpenAIEmbeddings,
 )
-from typing import List, Tuple, Any, AsyncIterator
-from langchain.evaluation import load_evaluator
-import pandas as pd
-from ipydatagrid import DataGrid, BarRenderer
-from bqplot import LinearScale, ColorScale
-from transformers import AutoTokenizer, AutoModelForMaskedLM
-import torch
-import textwrap
-from langchain._api import suppress_langchain_deprecation_warning
-from langchain_core.agents import AgentActionMessageLog, AgentFinish
+from langgraph.channels.base import ChannelsManager
+from langgraph.pregel import Pregel, _prepare_next_tasks
+from transformers import AutoModelForMaskedLM, AutoTokenizer
 
 load_dotenv()
 
@@ -55,7 +58,7 @@ def embeddings():
             azure_deployment=os.environ["AZURE_OPENAI_EMBEDDING_NAME"]
         )
     else:
-        raise ValueError("No provider secret found in environment variables.")
+        raise ValueError(" No provider secret found in environment variables.")
 
 
 def formatted_output_writer(data):
@@ -72,7 +75,7 @@ def rag_agent_output_streamer(chunks):
                         yield "Generated response:\n"
                         yield "\n".join(textwrap.wrap(message.content, width=120))
                     if key == "retrieve":
-                        yield f"Retrieved document"
+                        yield "Retrieved document"
                     if key == "rewrite":
                         yield f"Rewritten question:\n{message.content}"
                     if key == "agent":
@@ -271,3 +274,11 @@ def qdr_client():
         },
     )
     return client, collection_name, vector_name
+
+
+def is_resumeable(app: Pregel, config: Dict):
+    checkpoint = app.checkpointer.get(config)
+    with ChannelsManager(app.channels, checkpoint) as channels:
+        _, tasks = _prepare_next_tasks(checkpoint, app.nodes, channels, False)
+
+    return bool(tasks)
