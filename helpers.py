@@ -11,6 +11,8 @@ from ipydatagrid import BarRenderer, DataGrid
 from langchain._api import suppress_langchain_deprecation_warning
 from langchain.evaluation import load_evaluator
 from langchain_core.agents import AgentActionMessageLog, AgentFinish
+from langchain_core.messages import BaseMessage, HumanMessage
+from langchain_core.runnables import Runnable
 from langchain_openai import (
     AzureChatOpenAI,
     AzureOpenAIEmbeddings,
@@ -282,3 +284,40 @@ def is_resumeable(app: Pregel, config: Dict):
         _, tasks = _prepare_next_tasks(checkpoint, app.nodes, channels, False)
 
     return bool(tasks)
+
+
+def interactive_conversation(app: Runnable):
+    while True:
+        user = input("Enter message (q to quit): ")
+        if user in {"q", "Q"}:
+            print("Byebye")
+            break
+        response = app.invoke(user)
+        for k, v in response.items():
+            print(f"{k.title()}:")
+            print(f"{v}\n")
+        print("\n-------------------\n", flush=True)
+
+
+def interactive_langgraph_conversation(
+    app, config={"configurable": {"thread_id": "1"}}, k=0
+):
+    while True:
+        user = input("Enter message (q to quit): ")
+        if user in {"q", "Q"}:
+            print("Byebye")
+            break
+        response: List[BaseMessage] = app.invoke(HumanMessage(user), config)
+        print("Input:")
+        print(f"{response[-2].content}\n")
+        print("History:")
+        if k >= 1:
+            for message in response[-(k * 2 + 2) : -2]:
+                print(f"{message.type.title()}: {message.content}")
+        else:
+            for message in response[0:-2]:
+                print(f"{message.type.title()}: {message.content}")
+        print("\nResponse")
+        print(f"{response[-1].content}\n")
+
+        print("\n-------------------\n", flush=True)
