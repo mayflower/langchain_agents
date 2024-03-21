@@ -1,12 +1,13 @@
 langchain>=0.1.9
 langgraph>=0.0.26
 pydantic>=2.0.0
-tavily-python
 langchain-openai>=0.0.2
 langchainhub
-langchain_community>=0.0.27
+langchain-community>=0.0.27
 langchain-cli
+langchain-experimental
 langserve[all]
+tavily-python
 openai
 python-dotenv
 google-search-results
@@ -31,3 +32,6 @@ torch
 transformers
 qdrant_client
 rank_bm25
+pandas
+duckdb
+networkx
