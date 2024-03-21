@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 from ipydatagrid import BarRenderer, DataGrid
 from langchain._api import suppress_langchain_deprecation_warning
 from langchain.evaluation import load_evaluator
+from langchain_core._api import suppress_langchain_beta_warning
 from langchain_core.agents import AgentActionMessageLog, AgentFinish
 from langchain_core.messages import BaseMessage, HumanMessage
 from langchain_core.runnables import Runnable
@@ -22,8 +23,6 @@ from langchain_openai import (
 from langgraph.channels.base import ChannelsManager
 from langgraph.pregel import Pregel, _prepare_next_tasks
 from transformers import AutoModelForMaskedLM, AutoTokenizer
-
-load_dotenv()
 
 
 def llm(temperature: float = 0.7, model: str = None, streaming: bool = True, **kwargs):
@@ -132,14 +131,15 @@ async def formatted_output_streamer(stream: AsyncIterator[Any]) -> AsyncIterator
 
 
 async def graph_agent_llm_output_streamer_events(app, inputs):
-    async for event in app.astream_events(inputs, version="v1"):
-        ev = event["event"]
-        if ev == "on_chat_model_stream":
-            function_call_chunk = event["data"]["chunk"].additional_kwargs.get(
-                "function_calls", None
-            )
-            if function_call_chunk is None:
-                print(event["data"]["chunk"].content, end="", flush=True)
+    with suppress_langchain_beta_warning():
+        async for event in app.astream_events(inputs, version="v1"):
+            ev = event["event"]
+            if ev == "on_chat_model_stream":
+                function_call_chunk = event["data"]["chunk"].additional_kwargs.get(
+                    "function_calls", None
+                )
+                if function_call_chunk is None:
+                    print(event["data"]["chunk"].content, end="", flush=True)
 
 
 # Only streams the final LLM output from the agent. Uses astream_log which is stable.
