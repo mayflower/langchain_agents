@@ -46,7 +46,7 @@ Create a new client secret and add it to the .env file, too.
 ## Step 5: Use docker to start working
 ```bash
 docker build --tag langchain_agents .
-docker run -it --rm -v  ${PWD}:/workspace -p 8888:8888 langchain_agents
+docker run -it --rm -v  ${PWD}:/workspaces -p 8888:8888 langchain_agents
 ```
 # Go!
 
