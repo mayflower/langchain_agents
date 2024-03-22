@@ -1,3 +1,5 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch
 langchain>=0.1.9
 langgraph>=0.0.26
 pydantic>=2.0.0
@@ -28,10 +30,14 @@ duckduckgo-search
 pre-commit
 nbdime
 sentence-transformers
-torch
 transformers
 qdrant_client
 rank_bm25
 pandas
 duckdb
 networkx
+playwright
+pygraphviz
+google-api-python-client
+google-auth-oauthlib
+google-auth-httplib2

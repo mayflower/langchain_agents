@@ -1,8 +1,0 @@
-langchain
-langserve
-python-dotenv
-pydantic
-openai
-sse_starlette
-fastapi
-uvicorn

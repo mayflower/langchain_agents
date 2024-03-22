@@ -33,9 +33,13 @@
     },
     "onCreateCommand": "/usr/local/bin/python -m pip install ipykernel && /usr/local/bin/python -m ipykernel install --user --name=python --display-name=Python3 && /usr/local/bin/python -m pip install nbstripout nbdime",
     "postCreateCommand": [
-        "/usr/local/bin/python -m nbstripout --install --attributes .gitattributes"
-        // "&&",
-        // "/usr/local/bin/python -m pip nbdime config-git --enable --global"
+        "/usr/local/bin/python -m nbstripout --install --attributes .gitattributes",
+        "&&",
+        "sudo apt-get update",
+        "&&",
+        "sudo apt-get install -y --no-install-recommends gcc python3-dev graphviz graphviz-dev",
+        "&&",
+        "pip install --no-cache-dir --requirement /tmp/requirements.txt"
     ],
     "privileged": true
 }

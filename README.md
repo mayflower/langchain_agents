@@ -8,19 +8,19 @@ This is a repository for our workshop. You'll find the slides (here)[https://sli
 
 The easiest way to get started is using vscode and devcontainers. For this you need to have docker and vscode installed on your machine. It's up to you though, whether you'd want to use the Devcontainer, or work with your local python installation. The Devcontainer just provides a consistent environment for everyone.
 
-## Step 1: get the source, luke! 
+## Step 1: get the source, luke!
 
-The workshop uses git and docker to make it easier to use on all platforms. 
-If You don't use docker for religious reasons you can use a local python virtenv / conda configuration instead. 
+The workshop uses git and docker to make it easier to use on all platforms.
+If You don't use docker for religious reasons you can use a local python virtenv / conda configuration instead.
 
 ```bash
 git clone https://github.com/mayflower/langchain_agents.git
 cd langchain_agents
 cp .env.dist .env
 ```
-## Step 2: Create an azure openai endpoint with embeddings, gpt-3.5 and gpt-4 models. 
+## Step 2: Create an azure openai endpoint with embeddings, gpt-3.5 and gpt-4 models.
 
-Please create an [openai endpoint](https://portal.azure.com/#create/Microsoft.CognitiveServicesOpenAI) at microsoft azure. 
+Please create an [openai endpoint](https://portal.azure.com/#create/Microsoft.CognitiveServicesOpenAI) at microsoft azure.
 Write down the Endpoint and Key1 to use them in your .env file.
 After the endpoints was created create model deployments for gpt-3.5-turbo and gpt-4 named "gpt-3-5-turbo" and "gpt-4", since "." is not a valid character for model deployments.
 Please create a deployment "text-embedding-ada-002" using the model "text-embedding-ada-002"
@@ -30,7 +30,7 @@ Copy the file .env.dist to .env and fill out the entries for AZURE_OPENAI_ENDPOI
 
 ## Step 3: Get a SerpApi-Key to search the internet
 
-Create an account at [SerpApi](https://serpapi.com/). 
+Create an account at [SerpApi](https://serpapi.com/).
 Get the key here: [serpapi.com/manage-api-key](https://serpapi.com/manage-api-key)
 Add it to your .env file.
 
@@ -46,13 +46,12 @@ Create a new client secret and add it to the .env file, too.
 ## Step 5: Use docker to start working
 ```bash
 docker build --tag langchain_agents .
-docker run -it --rm -v  ${PWD}:/home/jovyan/work -p 8888:8888 langchain_agents
+docker run -it --rm -v  ${PWD}:/workspace -p 8888:8888 langchain_agents
 ```
-# Go! 
+# Go!
 
 The docker output should show you a url that you are able to open.
 
-### Interested in langchain? 
+### Interested in langchain?
 
 You can get the free german translation of Mark Watsons Book at [hub.mayflower.de/langchain-buch](http://hub.mayflower.de/langchain-buch).
-
