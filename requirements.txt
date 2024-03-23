@@ -43,3 +43,4 @@ google-auth-oauthlib
 google-auth-httplib2
 jupyterlab
 crewai
+langfuse
