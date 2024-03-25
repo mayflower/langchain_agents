@@ -53,13 +53,13 @@ def llm(temperature: float = 0.7, model: str = None, streaming: bool = True, **k
         raise ValueError("No provider secret found in environment variables.")
 
 
-def embeddings():
+def embeddings(model=None, **kwargs):
     if os.environ.get("OPENAI_API_KEY"):
-        return OpenAIEmbeddings()
+        model_name = model if model else os.environ.get("OPENAI_EMBEDDING")
+        return OpenAIEmbeddings(model=model_name, **kwargs)
     elif os.environ.get("AZURE_OPENAI_API_KEY"):
-        return AzureOpenAIEmbeddings(
-            azure_deployment=os.environ["AZURE_OPENAI_EMBEDDING_NAME"]
-        )
+        deployment = model if model else os.environ.get("AZURE_OPENAI_EMBEDDING_NAME")
+        return AzureOpenAIEmbeddings(azure_deployment=deployment, **kwargs)
     else:
         raise ValueError(" No provider secret found in environment variables.")
 
@@ -208,8 +208,8 @@ class SpladeEmbeddings:
         return sorted_token_weight_dict
 
 
-def distance_grid(reference, test_set):
-    evaluator = load_evaluator("embedding_distance", embeddings=embeddings())
+def distance_grid(reference, test_set, model=embeddings()):
+    evaluator = load_evaluator("embedding_distance", embeddings=model)
     distances = []
 
     with suppress_langchain_deprecation_warning():
