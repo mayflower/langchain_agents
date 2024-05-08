@@ -32,6 +32,6 @@
         "EDITOR": "code -w"
     },
     "onCreateCommand": "/usr/local/bin/python -m pip install ipykernel && /usr/local/bin/python -m ipykernel install --user --name=python --display-name=Python3 && /usr/local/bin/python -m pip install nbstripout nbdime",
-    "postCreateCommand": "/usr/local/bin/python -m nbstripout --install --attributes .gitattributes && sudo apt update && sudo apt install -y --no-install-recommends gcc python3-dev graphviz graphviz-dev && pip install --no-cache-dir --requirement requirements.txt && playwright install --with-deps chromium",
+    "postCreateCommand": "sudo apt update && sudo apt install -y --no-install-recommends gcc python3-dev graphviz graphviz-dev && pip install --no-cache-dir --requirement requirements.txt && playwright install --with-deps chromium",
     "privileged": true
 }
