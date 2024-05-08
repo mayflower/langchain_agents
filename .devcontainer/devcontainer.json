@@ -1,6 +1,6 @@
 {
     "name": "Langchain Agents",
-    "image": "mcr.microsoft.com/devcontainers/python:1-3.12-bullseye",
+    "image": "public.ecr.aws/o2p7t7z4/langchain_agents:latest",
     "features": {
         "ghcr.io/hspaans/devcontainer-features/sshpass:1": {
             "installDirectlyFromGitHubRelease": true,
@@ -31,7 +31,5 @@
         "TZ": "Europe/Berlin",
         "EDITOR": "code -w"
     },
-    "onCreateCommand": "/usr/local/bin/python -m pip install ipykernel && /usr/local/bin/python -m ipykernel install --user --name=python --display-name=Python3 && /usr/local/bin/python -m pip install nbstripout nbdime",
-    "postCreateCommand": "sudo apt update && sudo apt install -y --no-install-recommends gcc python3-dev graphviz graphviz-dev && pip install --no-cache-dir --requirement requirements.txt && playwright install --with-deps chromium",
-    "privileged": true
+    "privileged": false
 }
