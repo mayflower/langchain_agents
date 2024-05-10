@@ -260,7 +260,7 @@ def qdr_client():
 def is_resumeable(app: Pregel, config: Dict):
     checkpoint = app.checkpointer.get(config)
     with ChannelsManager(app.channels, checkpoint) as channels:
-        _, tasks = _prepare_next_tasks(checkpoint, app.nodes, channels, False)
+        _, tasks = _prepare_next_tasks(checkpoint, app.nodes, channels, for_execution=False)
 
     return bool(tasks)
 
