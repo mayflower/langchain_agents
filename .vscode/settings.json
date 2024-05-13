@@ -1,0 +1,39 @@
+{
+    "python.analysis.packageIndexDepths": [
+        {
+            "name": "langchain",
+            "depth": 3,
+            "includeAllSymbols": true
+        },
+        {
+            "name": "langgraph",
+            "depth": 3,
+            "includeAllSymbols": true
+        },
+        {
+            "name": "langchain_core",
+            "depth": 3,
+            "includeAllSymbols": true
+        },
+        {
+            "name": "langchain_community",
+            "depth": 3,
+            "includeAllSymbols": true
+        },
+        {
+            "name": "starlette_admin",
+            "depth": 3,
+            "includeAllSymbols": true
+        },
+        {
+            "name": "taskiq",
+            "depth": 4,
+            "includeAllSymbols": true
+        },
+        {
+            "name": "langfuse",
+            "depth": 4,
+            "includeAllSymbols": true
+        }
+        ]
+}
