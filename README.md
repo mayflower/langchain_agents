@@ -1,4 +1,5 @@
 # 🦜🔗 Autonome Agenten mit LangChain
+
 Dies ist das Repository für unseren Workshop. Die Folien findest du [hier](https://slides.com/johann-peterhartmann/autonome-agenten/).
 
 # Setup
@@ -6,6 +7,15 @@ Dies ist das Repository für unseren Workshop. Die Folien findest du [hier](http
 ## Voraussetzungen:
 
 Der einfachste Weg, um loszulegen, ist die Verwendung von VSCode und Devcontainers. Dafür müssen Docker und VSCode auf deinem Rechner installiert sein. Du kannst auch das Dockerfile oder eine lokale Python-Umgebung (falls du Docker aus religiösen Gründen nicht magst) verwenden. Der Devcontainer bietet lediglich eine einheitliche Umgebung für alle.
+
+#### M1 / Minimal Installation
+
+Für die M1 Architektur funktioniert dieser Container momentan nicht und ist auch nicht dafür gedacht. Man kann versuchen einen anderen Container zu starten mit
+
+`docker run -u vscode -p 8888:8888 -v .:/workspace public.ecr.aws/o2p7t7z4/langchain\_agents:latest jupyter-lab --ip 0.0.0.0`
+
+Ansonsten empfehlen wir das ganze ohne docker zu installieren: [Minimal Installation](./README_MINIMAL.md)
+
 
 ## Get the source, luke!
 
@@ -27,7 +37,6 @@ Erstelle eine Kopie von der Datei env.dist und benenne die Kopie .env
 
 Das Passwort bekommst du von uns. Bitte danach den key in die .env übertragen als OPENAI_API_KEY
 
-
 ### Keys für Tavily und Serparpi
 
 Hier registrieren [SerpApi](https://serpapi.com/).
@@ -38,7 +47,6 @@ Für Tavily [hier](klicken). Ebenfalls einen key erstellen und zum .env file hin
 
 Beide keys sind bis zu einem gewissen Request-Limit/Monat gratis
 
-
 ## Docker
 
 ### Wer im Dev-Container unterwegs sein will
@@ -46,11 +54,14 @@ Beide keys sind bis zu einem gewissen Request-Limit/Monat gratis
 Unten links in VSCode auf das blaue Viereck klicken. "Reopen in Container". Wenn er dann fragt, ob er den Container neu bauen soll, einmal bestätigen.
 
 ### Für normales docker
+
 ```bash
 docker build --tag langchain_agents .
 docker run -it --rm -v  ${PWD}:/workspace -p 8888:8888 langchain_agents
 ```
 
+
 ## Go. Notebooks starten
 
 Wer möchte, kann natürlich gerne direkt in VSCode oder einem Editor der Wahl die Notebooks starten. Die Logs von Docker bieten sonst immer einen Link an, wie man Jupyter Lab im Browser benutzen kann. Üblicherweise `localhost:8888`
+
