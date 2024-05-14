@@ -28,7 +28,6 @@ Deprecated==1.2.14
 distlib==0.3.8
 distro==1.9.0
 duckdb==0.10.1
-duckduckgo_search==5.3.0
 executing==2.0.1
 faiss-cpu==1.8.0
 fastapi==0.110.0
