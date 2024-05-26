@@ -13,7 +13,7 @@ from langchain.evaluation import load_evaluator
 from langchain_core._api import suppress_langchain_beta_warning
 from langchain_core.agents import AgentActionMessageLog, AgentFinish
 from langchain_core.messages import BaseMessage, HumanMessage
-from langchain_core.runnables import Runnable
+from langchain_core.runnables import Runnable, ensure_config
 from langchain_openai import (
     AzureChatOpenAI,
     AzureOpenAIEmbeddings,
@@ -23,6 +23,7 @@ from langchain_openai import (
 from langgraph.channels.base import ChannelsManager
 from langgraph.pregel import Pregel, _prepare_next_tasks
 from transformers import AutoModelForMaskedLM, AutoTokenizer
+from langgraph.managed.base import ManagedValuesManager
 
 
 load_dotenv()
@@ -412,10 +413,22 @@ def is_resumeable(app: Pregel, config: Dict):
         bool: True if there are tasks to be resumed, False otherwise.
     """
     checkpoint = app.checkpointer.get(config)
-    with ChannelsManager(app.channels, checkpoint) as channels:
-        _, tasks = _prepare_next_tasks(checkpoint, app.nodes, channels, for_execution=False)
+    with ChannelsManager(
+        app.channels, checkpoint
+        )  as channels, ManagedValuesManager(
+            app.managed_values_dict, ensure_config(config), app
+        ) as managed:
+            _, tasks = _prepare_next_tasks(
+                checkpoint,
+                app.nodes,
+                channels,
+                managed,
+                config,
+                -1,
+                for_execution=False,
+            )
 
-    return bool(tasks)
+    return tasks
 
 
 def interactive_conversation(app: Runnable):
