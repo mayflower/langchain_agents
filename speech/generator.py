@@ -10,7 +10,7 @@ from pydub.playback import play
 
 
 class GenerateAndPlayBack:
-    """Generates an LLM answer via Gemini Pro and plays it back via Google TTS."""
+    """Generates an LLM answer via Gemini-Pro 1.5 and plays it back via Google TTS."""
 
     def __init__(self, model=ChatVertexAI(model="gemini-1.5-pro-preview-0409")):
         self.model = model

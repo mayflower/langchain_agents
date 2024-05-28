@@ -1,35 +1,14 @@
 import asyncio
 import queue
 import sys
-import os
-from dotenv import load_dotenv
-
-from google.cloud import speech
-
-from langchain_google_vertexai import ChatVertexAI
-from langchain_google_genai import ChatGoogleGenerativeAI
-
-
 import pyaudio
 
-# from helpers import llm
-
-import google.cloud.texttospeech as tts
-from pydub import AudioSegment
-from pydub.playback import play
+from google.cloud import speech
 from generator import GenerateAndPlayBack
-
-# from helpers import graph_agent_llm_output_streamer_events
 
 # Audio recording parameters
 RATE = 16000
 CHUNK = int(RATE / 10)  # 100ms
-
-load_dotenv()  # take environment variables from .env.
-api_key = os.getenv("GOOGLE_API_KEY")
-
-llm = ChatVertexAI(model="gemini-1.5-pro-preview-0409", google_api_key=api_key)
-# llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro-preview-0409", google_api_key=api_key)
 
 """Records audio and answers in a streaming manner."""
 
@@ -134,7 +113,7 @@ class MicrophoneStream:
 
 
 def listen_print_loop(responses: object) -> str:
-    """Iterates through server responses and prints them.
+    """Iterates through speech server responses and prints them.
 
     The responses passed is a generator that will block until a response
     is provided by the server.
