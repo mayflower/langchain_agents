@@ -188,9 +188,7 @@ async def graph_agent_llm_output_streamer_events(app, inputs):
             ev = event["event"]
             if ev == "on_chat_model_stream":
                 chunk = event["data"]["chunk"]
-                function_call_chunk = chunk.additional_kwargs.get(
-                    "function_call", False
-                ) or chunk.additional_kwargs.get("tool_calls", False)
+                function_call_chunk = chunk.tool_calls
                 if not function_call_chunk:
                     print(chunk.content, end="", flush=True)
 
