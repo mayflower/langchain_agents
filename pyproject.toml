@@ -1,0 +1,42 @@
+[tool.poetry]
+name = "langchain-agents"
+version = "0.1.0"
+description = ""
+authors = ["LorAutumn <lorenz.herbst@gmx.net>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+langchain = "*"
+langgraph = "*"
+pydantic = "*"
+langchain-openai = "*"
+langchainhub = "*"
+langchain-community = "*"
+langchain-cli = "*"
+langchain-experimental = "*"
+langserve = {extras = ["all"], version = "*"}
+tavily-python = "*"
+openai = "*"
+python-dotenv = "*"
+google-search-results = "*"
+faiss-cpu = "*"
+numexpr = "*"
+beautifulsoup4 = "*"
+google-api-python-client = "*"
+google-auth-oauthlib = "*"
+google-auth-httplib2 = "*"
+jupyterlab = "*"
+langfuse = "*"
+# langchain-google-vertexai = "*"
+langchain-google-vertexai = { git = "https://github.com/langchain-ai/langchain-google.git", subdirectory = "libs/vertexai" }
+pyaudio = "^0.2.14"
+google-cloud-texttospeech = "^2.16.3"
+pydub = "^0.25.1"
+google-cloud-speech = "^2.26.0"
+langchain-google-genai = "^1.0.5"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
