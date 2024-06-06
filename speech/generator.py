@@ -1,3 +1,5 @@
+from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
+from langchain.schema import SystemMessage
 from langchain_google_vertexai import ChatVertexAI
 import queue
 import threading
@@ -78,6 +80,7 @@ class GenerateAndPlayBack:
     Is configured for text generation with Gemini Pro. For use with other models the generate_and_play may need to be adjusted.
     This is because Gemini Pro streaming does not return single tokens but chunks of text. Sentences are actually split by . after a character.
     It will not work if single tokens are returned by different models."""
+
     def generate_and_play(self, result):
         """Start the processing queue threads."""
         t = threading.Thread(target=self.process_queue)
@@ -85,8 +88,17 @@ class GenerateAndPlayBack:
         t.start()
         tw.start()
 
+        prompt = ChatPromptTemplate.from_messages(
+            [
+                SystemMessage(
+                    "Du bist ein Sprachassistent. Formuliere deine Antworten immer in einer Art die einfach vorgelesen werden kann. Lasse vor allem Sonderzeichen wie Sternchen oder Emojis weg."
+                ),
+                HumanMessagePromptTemplate.from_template("{input}"),
+            ]
+        )
+
         actual_sentence = ""
-        for chunk in self.model.stream(result):
+        for chunk in (prompt | self.model).stream({"input": result}):
             """Collect tokens and split them into sentences."""
             match = re.search(r"[a-zA-Z]\.", chunk.content)
             if match:
