@@ -13,7 +13,7 @@ from langchain.evaluation import load_evaluator
 from langchain_core._api import suppress_langchain_beta_warning
 from langchain_core.agents import AgentActionMessageLog, AgentFinish
 from langchain_core.messages import BaseMessage, HumanMessage
-from langchain_core.runnables import Runnable
+from langchain_core.runnables import Runnable, ensure_config
 from langchain_openai import (
     AzureChatOpenAI,
     AzureOpenAIEmbeddings,
@@ -23,6 +23,8 @@ from langchain_openai import (
 from langgraph.channels.base import ChannelsManager
 from langgraph.pregel import Pregel, _prepare_next_tasks
 from transformers import AutoModelForMaskedLM, AutoTokenizer
+from langgraph.managed.base import ManagedValuesManager
+
 
 load_dotenv()
 
@@ -54,6 +56,19 @@ def llm(temperature: float = 0.7, model: str = None, streaming: bool = True, **k
 
 
 def embeddings(model=None, **kwargs):
+    """
+    Returns an instance of the appropriate embeddings provider based on the environment variables.
+
+    Args:
+        model (str, optional): The name of the model to use for embeddings. If not provided, the value from the environment variable will be used.
+        **kwargs: Additional keyword arguments to be passed to the embeddings provider.
+
+    Returns:
+        An instance of the embeddings provider.
+
+    Raises:
+        ValueError: If no provider secret is found in the environment variables.
+    """
     if os.environ.get("OPENAI_API_KEY"):
         model_name = model if model else os.environ.get("OPENAI_EMBEDDING")
         return OpenAIEmbeddings(model=model_name, **kwargs)
@@ -61,14 +76,34 @@ def embeddings(model=None, **kwargs):
         deployment = model if model else os.environ.get("AZURE_OPENAI_EMBEDDING_NAME")
         return AzureOpenAIEmbeddings(azure_deployment=deployment, **kwargs)
     else:
-        raise ValueError(" No provider secret found in environment variables.")
+        raise ValueError("No provider secret found in environment variables.")
 
 
 def formatted_output_writer(data):
+    """
+    Writes the formatted output from the given data.
+
+    Args:
+        data (dict): The data containing the agent outcome and return values.
+
+    Returns:
+        str: The formatted output.
+
+    """
     return data.get("agent_outcome").return_values.get("output")
 
 
 def rag_agent_output_streamer(chunks):
+    """
+    Generator function that processes chunks of output from the RAG agent.
+
+    Args:
+        chunks (list): A list of dictionaries representing the output chunks.
+
+    Yields:
+        str: The processed output from each chunk.
+
+    """
     for chunk in chunks:
         for key, value in chunk.items():
             if key != "__end__":
@@ -100,11 +135,19 @@ def rag_agent_output_streamer(chunks):
                 yield "\n---\n"
 
 
-def agent_formatted_output(data):
-    return data.get("agent_outcome").return_values.get("output")
 
 
 async def formatted_output_streamer(stream: AsyncIterator[Any]) -> AsyncIterator[Any]:
+    """
+    Formats the output stream by concatenating the log messages from the input stream.
+
+    Args:
+        stream (AsyncIterator[Any]): The input stream containing log messages.
+
+    Yields:
+        str: The formatted output log message.
+
+    """
     async for chunk in stream:
         output = ""
         for key, value in chunk.items():
@@ -130,19 +173,36 @@ async def formatted_output_streamer(stream: AsyncIterator[Any]) -> AsyncIterator
 
 
 async def graph_agent_llm_output_streamer_events(app, inputs):
+    """
+    Stream the output events from the graph agent's language model.
+
+    Args:
+        app: The graph agent application.
+        inputs: The inputs to be streamed.
+
+    Returns:
+        None
+    """
     with suppress_langchain_beta_warning():
         async for event in app.astream_events(inputs, version="v1"):
             ev = event["event"]
             if ev == "on_chat_model_stream":
                 chunk = event["data"]["chunk"]
-                function_call_chunk = chunk.additional_kwargs.get(
-                    "function_call", False
-                ) or chunk.additional_kwargs.get("tool_calls", False)
+                function_call_chunk = chunk.tool_calls
                 if not function_call_chunk:
                     print(chunk.content, end="", flush=True)
 
 
 def pretty_print_docs(docs):
+    """
+    Prints the contents of multiple documents in a pretty format.
+
+    Args:
+        docs (list): A list of Document objects.
+
+    Returns:
+        None
+    """
     print(
         f"\n\n{'-' * 100}\n".join(
             [f"Document {i+1}:\n\n" + d.page_content for i, d in enumerate(docs)]
@@ -151,6 +211,16 @@ def pretty_print_docs(docs):
 
 
 def pretty_print_ranks(corpus, ranks):
+    """
+    Prints the ranks of the given corpus in a pretty format.
+
+    Args:
+        corpus (list): A list of strings representing the corpus.
+        ranks (list): A list of dictionaries containing the ranks and corpus IDs.
+
+    Returns:
+        None
+    """
     print(
         f"\n\n{'-' * 100}\n".join(
             [
@@ -162,6 +232,15 @@ def pretty_print_ranks(corpus, ranks):
 
 
 def pp(text: str) -> List[str]:
+    """
+    Preprocesses the given text by removing punctuation, converting to lowercase, and splitting into tokens.
+
+    Args:
+        text (str): The input text to be preprocessed.
+
+    Returns:
+        List[str]: A list of tokens after preprocessing.
+    """
     text = re.sub(r"[^\w\s]", "", text)
     text = text.lower()
     tokens = text.split()
@@ -169,11 +248,36 @@ def pp(text: str) -> List[str]:
 
 
 class SpladeEmbeddings:
+    """
+    A class for generating sparse embeddings using the Splade model.
+
+    Args:
+        model_id (str, optional): The identifier of the pre-trained Splade model. Defaults to "naver/splade-cocondenser-ensembledistil".
+
+    Attributes:
+        tokenizer: The tokenizer used for tokenizing the input text.
+        model: The pre-trained Splade model used for generating embeddings.
+
+    Methods:
+        sparse_vector: Generates a sparse vector representation of the input text.
+        sparse_tuple: Generates a sparse tuple representation of the input text.
+        human_readable_sparse_dict: Generates a human-readable dictionary of token-weight pairs for the input text.
+    """
+
     def __init__(self, model_id: str = "naver/splade-cocondenser-ensembledistil"):
         self.tokenizer = AutoTokenizer.from_pretrained(model_id)
         self.model = AutoModelForMaskedLM.from_pretrained(model_id)
 
     def sparse_vector(self, text: str) -> torch.Tensor:
+        """
+        Generates a sparse vector representation of the input text.
+
+        Args:
+            text (str): The input text.
+
+        Returns:
+            torch.Tensor: The sparse vector representation of the input text.
+        """
         tokens = self.tokenizer(text, return_tensors="pt")
         output = self.model(**tokens)
         logits, attention_mask = output.logits, tokens.attention_mask
@@ -183,6 +287,15 @@ class SpladeEmbeddings:
         return max_val.squeeze()
 
     def sparse_tuple(self, text: str) -> Tuple[List[int], List[float]]:
+        """
+        Generates a sparse tuple representation of the input text.
+
+        Args:
+            text (str): The input text.
+
+        Returns:
+            Tuple[List[int], List[float]]: The sparse tuple representation of the input text.
+        """
         vector = self.sparse_vector(text)
         indices = vector.nonzero().squeeze().cpu().tolist()
         weights = vector[indices].cpu().tolist()
@@ -190,6 +303,15 @@ class SpladeEmbeddings:
         return (indices, weights)
 
     def human_readable_sparse_dict(self, text: str):
+        """
+        Generates a human-readable dictionary of token-weight pairs for the input text.
+
+        Args:
+            text (str): The input text.
+
+        Returns:
+            dict: A dictionary containing token-weight pairs, sorted by weight in descending order.
+        """
         vector = self.sparse_vector(text)
         cols = vector.nonzero().squeeze().cpu().tolist()
         weights = vector[cols].cpu().tolist()
@@ -209,6 +331,18 @@ class SpladeEmbeddings:
 
 
 def distance_grid(reference, test_set, model=embeddings()):
+    """
+    Calculate the distance between a reference string and a set of test strings using an embedding model.
+
+    Args:
+        reference (str): The reference string.
+        test_set (list): A list of test strings.
+        model: The embedding model to use (default: embeddings()).
+
+    Returns:
+        DataGrid: A DataGrid object containing the test strings and their corresponding distances.
+
+    """
     evaluator = load_evaluator("embedding_distance", embeddings=model)
     distances = []
 
@@ -235,6 +369,14 @@ def distance_grid(reference, test_set, model=embeddings()):
 
 
 def qdr_client():
+    """
+    Creates and returns a QdrantClient object for interacting with a Qdrant collection.
+
+    Returns:
+        client (QdrantClient): The QdrantClient object.
+        collection_name (str): The name of the collection.
+        vector_name (str): The name of the sparse vector.
+    """
     try:
         from qdrant_client import QdrantClient, models
     except ImportError:
@@ -258,14 +400,45 @@ def qdr_client():
 
 
 def is_resumeable(app: Pregel, config: Dict):
-    checkpoint = app.checkpointer.get(config)
-    with ChannelsManager(app.channels, checkpoint) as channels:
-        _, tasks = _prepare_next_tasks(checkpoint, app.nodes, channels, for_execution=False)
+    """
+    Checks if the application is resumeable.
 
-    return bool(tasks)
+    Args:
+        app (Pregel): The Pregel application.
+        config (Dict): The configuration dictionary.
+
+    Returns:
+        bool: True if there are tasks to be resumed, False otherwise.
+    """
+    checkpoint = app.checkpointer.get(config)
+    with ChannelsManager(
+        app.channels, checkpoint
+        )  as channels, ManagedValuesManager(
+            app.managed_values_dict, ensure_config(config), app
+        ) as managed:
+            _, tasks = _prepare_next_tasks(
+                checkpoint,
+                app.nodes,
+                channels,
+                managed,
+                config,
+                -1,
+                for_execution=False,
+            )
+
+    return tasks
 
 
 def interactive_conversation(app: Runnable):
+    """
+    Run an interactive conversation with the given app.
+
+    Args:
+        app (Runnable): The app to interact with.
+
+    Returns:
+        None
+    """
     while True:
         user = input("Enter message (q to quit): ")
         if user in {"q", "Q"}:
@@ -278,9 +451,21 @@ def interactive_conversation(app: Runnable):
         print("\n-------------------\n", flush=True)
 
 
+
 def interactive_langgraph_conversation(
     app, config={"configurable": {"thread_id": "1"}}, k=0
 ):
+    """
+    Run an interactive conversation with the langgraph agent.
+
+    Args:
+        app: The langgraph agent application.
+        config: Configuration options for the langgraph agent (default: {"configurable": {"thread_id": "1"}}).
+        k: The number of previous messages to display in the conversation history (default: 0).
+
+    Returns:
+        None
+    """
     while True:
         user = input("Enter message (q to quit): ")
         if user in {"q", "Q"}:
