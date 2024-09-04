@@ -36,7 +36,7 @@ pandas
 duckdb
 networkx
 playwright
-pygraphviz
+# pygraphviz
 google-api-python-client
 google-auth-oauthlib
 google-auth-httplib2

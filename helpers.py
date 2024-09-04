@@ -20,10 +20,10 @@ from langchain_openai import (
     ChatOpenAI,
     OpenAIEmbeddings,
 )
-from langgraph.channels.base import ChannelsManager
-from langgraph.pregel import Pregel, _prepare_next_tasks
+from langgraph.pregel import ChannelsManager, Pregel
+from langgraph.pregel.algo import prepare_next_tasks
 from transformers import AutoModelForMaskedLM, AutoTokenizer
-from langgraph.managed.base import ManagedValuesManager
+from langgraph.managed.base import ManagedValueMapping
 
 
 load_dotenv()
@@ -133,8 +133,6 @@ def rag_agent_output_streamer(chunks):
                             ]
                         )
                 yield "\n---\n"
-
-
 
 
 async def formatted_output_streamer(stream: AsyncIterator[Any]) -> AsyncIterator[Any]:
@@ -411,20 +409,24 @@ def is_resumeable(app: Pregel, config: Dict):
         bool: True if there are tasks to be resumed, False otherwise.
     """
     checkpoint = app.checkpointer.get(config)
-    with ChannelsManager(
-        app.channels, checkpoint
-        )  as channels, ManagedValuesManager(
-            app.managed_values_dict, ensure_config(config), app
-        ) as managed:
-            _, tasks = _prepare_next_tasks(
-                checkpoint,
-                app.nodes,
-                channels,
-                managed,
-                config,
-                -1,
-                for_execution=False,
-            )
+    # Handle channels
+    with ChannelsManager(app.channels, checkpoint) as channels:
+        # Initialize ManagedValueMapping
+        managed_values = ManagedValueMapping(app.managed_values_dict)
+
+        # Ensure configuration
+        ensured_config = ensure_config(config)
+
+        # Prepare next tasks
+        _, tasks = prepare_next_tasks(
+            checkpoint,
+            app.nodes,
+            channels,
+            managed_values,
+            ensured_config,
+            -1,
+            for_execution=False,
+        )
 
     return tasks
 
@@ -449,7 +451,6 @@ def interactive_conversation(app: Runnable):
             print(f"{k.title()}:")
             print(f"{v}\n")
         print("\n-------------------\n", flush=True)
-
 
 
 def interactive_langgraph_conversation(
