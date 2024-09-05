@@ -1,11 +1,15 @@
 --extra-index-url https://download.pytorch.org/whl/cpu
-torch
-langchain
-langgraph
-pydantic
-langchain-openai
+# langchain>=0.1.16
+langchain>=0.2.15
+langgraph>=0.2.16
+# langgraph>=0.0.26
+pydantic>=2.0.0
+# langchain-openai>=0.0.2
+langchain-openai>=0.1.23
 langchainhub
-langchain-community
+# langchain-community>=0.0.27
+langchain-community>=0.2.0
+torch
 langchain-cli
 langchain-experimental
 langserve[all]
@@ -13,7 +17,7 @@ tavily-python
 openai
 python-dotenv
 google-search-results
-faiss-cpu
+faiss-cpu==1.7.4
 pypdf
 tqdm
 wikipedia
@@ -35,7 +39,7 @@ rank_bm25
 pandas
 duckdb
 networkx
-playwright
+playwright==1.40.0
 # pygraphviz
 google-api-python-client
 google-auth-oauthlib
