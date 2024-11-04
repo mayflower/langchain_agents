@@ -9,7 +9,7 @@ langchain-openai>=0.1.23
 langchainhub
 # langchain-community>=0.0.27
 langchain-community>=0.2.0
-torch
+# torch
 langchain-cli
 langchain-experimental
 langserve[all]
@@ -17,7 +17,7 @@ tavily-python
 openai
 python-dotenv
 google-search-results
-faiss-cpu==1.7.4
+# faiss-cpu
 pypdf
 tqdm
 wikipedia
@@ -52,3 +52,4 @@ langchain-text-splitters
 unstructured
 markdown
 wikipedia
+langgraph-checkpoint-sqlite
