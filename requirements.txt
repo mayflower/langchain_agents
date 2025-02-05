@@ -53,3 +53,6 @@ unstructured
 markdown
 wikipedia
 langgraph-checkpoint-sqlite
+google-genai
+websockets
+taskgroup
