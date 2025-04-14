@@ -131,24 +131,24 @@ Implementieren Sie ein einfaches Währungsumrechnungstool:
 
 ```python
 @tool
-def währungsumrechnung(betrag: float, von_währung: str, zu_währung: str):
+def waehrungsumrechnung(betrag: float, von_waehrung: str, zu_waehrung: str):
     """Rechnet einen Geldbetrag von einer Währung in eine andere um.
     
     Args:
         betrag: Der umzurechnende Geldbetrag
-        von_währung: Quellwährung (z.B. "EUR", "USD", "GBP")
-        zu_währung: Zielwährung (z.B. "EUR", "USD", "GBP")
+        von_waehrung: Quellwährung (z.B. "EUR", "USD", "GBP")
+        zu_waehrung: Zielwährung (z.B. "EUR", "USD", "GBP")
         
     Returns:
         Eine Zeichenkette mit dem umgerechneten Betrag
     """
     kurse = {"EUR": 1.0, "USD": 1.08, "GBP": 0.85, "JPY": 163.2}
 
-    if von_währung not in kurse or zu_währung not in kurse:
+    if von_waehrung not in kurse or zu_waehrung not in kurse:
         return "Währung nicht unterstützt"
 
-    ergebnis = betrag * (kurse[zu_währung] / kurse[von_währung])
-    return f"{betrag} {von_währung} = {ergebnis:.2f} {zu_währung}"
+    ergebnis = betrag * (kurse[zu_waehrung] / kurse[von_waehrung])
+    return f"{betrag} {von_waehrung} = {ergebnis:.2f} {zu_waehrung}"
 ```
 
 ## Weiterführende Ressourcen
