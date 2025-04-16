@@ -41,6 +41,8 @@ bqplot = "^0.12.44"
 ipydatagrid = "^1.4.0"
 transformers = "^4.51.3"
 matplotlib = "^3.10.1"
+sentence-transformers = "^4.1.0"
+scikit-learn = "^1.6.1"
 
 
 [build-system]
