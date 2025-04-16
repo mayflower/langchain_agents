@@ -54,3 +54,12 @@ docker run -it --rm -v  ${PWD}:/workspace -p 8888:8888 langchain_agents
 ## Go. Notebooks starten
 
 Wer möchte, kann natürlich gerne direkt in VSCode oder einem Editor der Wahl die Notebooks starten. Die Logs von Docker bieten sonst immer einen Link an, wie man Jupyter Lab im Browser benutzen kann. Üblicherweise `localhost:8888`
+
+## Nixos
+To use Jupyter Notebook inside venv and therefore being able to use pip install
+
+```
+nix develop .
+pip install notebook
+jupyter notebook
+```
