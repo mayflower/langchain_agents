@@ -1,4 +1,4 @@
-FROM jupyter/base-notebook as base
+FROM jupyter/base-notebook AS base
 
 USER root
 
@@ -6,12 +6,12 @@ USER root
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     gcc \
-    python3-dev \
+    git \
+    gnupg2 \
     graphviz \
     graphviz-dev\
-    gnupg2 \
-    git \
-    openssh-client && \
+    openssh-client \
+    python3-dev && \
     rm -rf /var/lib/apt/lists/* && \
     echo "${NB_USER} ALL=(ALL) NOPASSWD:ALL" | tee -a /etc/sudoers
 

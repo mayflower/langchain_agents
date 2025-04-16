@@ -34,7 +34,13 @@ pyaudio = "^0.2.14"
 google-cloud-texttospeech = "^2.16.3"
 pydub = "^0.25.1"
 google-cloud-speech = "^2.26.0"
-langchain-google-genai = "^1.0.5"
+langchain-google-genai = { git = "https://github.com/langchain-ai/langchain-google.git", subdirectory = "libs/genai" }
+pandas = "^2.2.3"
+torch = "^2.6.0"
+bqplot = "^0.12.44"
+ipydatagrid = "^1.4.0"
+transformers = "^4.51.3"
+matplotlib = "^3.10.1"
 
 
 [build-system]
